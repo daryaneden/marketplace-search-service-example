@@ -14,7 +14,7 @@ class IndexAd(IndexAdPort):
             if snapshot is None or snapshot.status != "active":
                 await uow.search.delete(ad_id)
             else:
-                await self._uow.search.upsert(
+                await uow.search.upsert(
                     ad_id=snapshot.ad_id,
                     title=snapshot.title,
                     description=snapshot.description,
