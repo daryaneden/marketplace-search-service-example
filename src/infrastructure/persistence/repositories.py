@@ -45,7 +45,7 @@ class SQLAlchemySearchRepository(SearchRepository):
         await self._session.execute(stmt)
 
     async def delete(self, ad_id: int) -> None:
-        stmt = delete(SearchIndexModel).where(SearchIndexModel.id == ad_id)
+        stmt = delete(SearchIndexModel).where(SearchIndexModel.ad_id == ad_id)
         await self._session.execute(stmt)
 
     async def search(

@@ -13,7 +13,6 @@ class IndexAd(IndexAdPort):
         async with self._uow as uow:
             if snapshot is None or snapshot.status != "active":
                 await uow.search.delete(ad_id)
-                await uow.commit()
             else:
                 await uow.search.upsert(
                     ad_id=snapshot.ad_id,
@@ -23,4 +22,4 @@ class IndexAd(IndexAdPort):
                     category=snapshot.category,
                     city=snapshot.city,
                 )
-                await uow.commit()
+            await uow.commit()
