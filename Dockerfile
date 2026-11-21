@@ -7,7 +7,8 @@ ENV PYTHONUNBUFFERED=1 \
     UV_NO_DEV=1 \
     UV_FROZEN=1 \
     PYTHONPATH=/app \
-    PATH="/root/.local/bin:$PATH"
+    UV_NO_SYNC=1 \
+    PATH="/app/.venv/bin:$PATH"
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends curl ca-certificates \
@@ -19,10 +20,15 @@ WORKDIR /app
 COPY pyproject.toml uv.lock ./
 RUN uv sync --frozen --no-install-project --no-dev
 
-COPY . .
+COPY src/ src/
+COPY bin/ bin/
+COPY migrations/ migrations/
+COPY alembic.ini ./
 
-RUN uv sync --frozen --no-dev
+RUN addgroup --system --gid 1000 appuser && \
+    adduser --system --uid 1000 --home /home/appuser --ingroup appuser appuser
 
+USER 1000:1000
 EXPOSE 8000
 
-CMD ["sh", "-c", "uv run alembic upgrade head && { uv run python -m bin.consumer & exec uv run python -m bin.api; }"]
+CMD ["python", "-m", "bin.container"]
